@@ -1,0 +1,120 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leanplum JavaScript Setup with Push Notifications</title>
+    <!-- Import LP js files -->
+    <script src="https://cdn.jsdelivr.net/npm/leanplum-sdk@1.11.0/dist/leanplum.min.js"></script>
+    <script type="text/javascript" src="leanplum.js"></script>
+    <script type="text/javascript" src="leanplum.min.js"></script>
+
+</head>
+<body>
+
+    <h1>Test Lp Notification</h1>
+
+    <button onclick="myFunction()">Click me</button>
+    <!-- Add a div to display the message -->
+    <div id="message"></div>
+
+   <!-- Below firebase code is not related to wrapper SDK, you can skip it -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyDizRB3IPW2dZzm00zXcOlXPhq6WnbwGOA",
+          authDomain: "webapp-5a8eb.firebaseapp.com",
+          projectId: "webapp-5a8eb",
+          storageBucket: "webapp-5a8eb.appspot.com",
+          messagingSenderId: "556598264182",
+          appId: "1:556598264182:web:5400bab6625596bab9fa57"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+      </script>
+
+<script>
+    function myFunction() {
+        Leanplum.setUserId("WebUser34");
+        console.log("User sent to LP");
+    }
+    </script>
+    <!-- Initialize Leanplum -->
+    <script>
+
+      // This value should be set to true only if you're developing on your server.
+var isDevelopmentMode = true;
+
+// Sample variables. This can be any JSON object.
+var variables = {
+ items: {
+   color: 'red',
+   size: 20,
+   showBadges: true
+ },
+ showAds: true
+};
+
+// Get your App ID and Keys from https://www.leanplum.com/dashboard?#/account/apps
+if (isDevelopmentMode) {
+ Leanplum.setAppIdForDevelopmentMode("app_VA4XP05hxW5BAtrMTOlSNmxQP9k5L8S40JfgSdtNvbM", "dev_SDJoM6YBvSPpPqN8SrUV3n2nUkuO9entbAMUNTlCWeU");
+
+} else {
+ Leanplum.setAppIdForProductionMode("YOUR_APP_ID", "YOUR_PRODUCTION_KEY");
+}
+
+Leanplum.setVariables(variables);
+Leanplum.start(function(success) {
+ console.log('Success: ' + success);
+ console.log('Variables', Leanplum.getVariables());
+});
+    </script>
+
+    <script>
+      function requestNotificationPermission() {
+    Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+            console.log('Notification permission granted.');
+            // Proceed with subscribing to push notifications
+            Leanplum.registerForWebPush('sw.min.js').then(subscriptionStatus => {
+                console.log('Subscription status: %s', subscriptionStatus);
+            });
+        } else {
+            console.log('Notification permission denied.');
+        }
+    });
+}
+
+// Call this function where appropriate in your code
+requestNotificationPermission();
+
+    </script>
+<!--
+    <script>
+
+let isSubscribedToWebPush = true;
+let isWebPushSupported = Leanplum.isWebPushSupported();
+
+  Leanplum.isWebPushSubscribed().then(subscriptionStatus => {
+      isSubscribedToWebPush = subscriptionStatus;
+      console.log('Success: Subscribed for Notifications');
+  });
+
+//Once validated, you can register the device for push:
+
+  // Register by passing SW filepath (which is in our root directory).
+  Leanplum.registerForWebPush('sw.min.js').then(subscriptionStatus => {
+    console.log('Subscription status: %s', subscriptionStatus);
+  });
+    </script>
+-->
+</body>
+</html>
