@@ -10,13 +10,44 @@
     <script src="https://cdn.jsdelivr.net/npm/leanplum-sdk@1.11.0/dist/leanplum.min.js"></script>
     <script type="text/javascript" src="leanplum.js"></script>
     <script type="text/javascript" src="leanplum.min.js"></script>
+    <script type="text/javascript" src="clevertap_sw.js"></script>
+    <!--Clevertap Code-->
+    <script type="text/javascript">
+      var clevertap = {event:[], profile:[], account:[], onUserLogin:[], notifications:[], privacy:[]};
+  // replace with the CLEVERTAP_ACCOUNT_ID with the actual ACCOUNT ID value from your Dashboard -> Settings page
+ clevertap.account.push({"id": "679-R87-876Z"});
+ clevertap.privacy.push({optOut: false}); //set the flag to true, if the user of the device opts out of sharing their data
+ clevertap.privacy.push({useIP: false}); //set the flag to true, if the user agrees to share their IP data
+  (function () {
+          var wzrk = document.createElement('script');
+          wzrk.type = 'text/javascript';
+          wzrk.async = true;
+          wzrk.src = ('https:' == document.location.protocol ? 'https://d2r1yp2w7bby2u.cloudfront.net' : 'http://static.clevertap.com') + '/js/clevertap.min.js';        
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(wzrk, s);
+   })();
+   console.log("CT connected");
+   clevertap.spa = true
+ </script>
+ 
+
+ <script>
+  clevertap.notifications.push({
+  "titleText":'Would you like to receive Push Notifications?',
+  "bodyText":'We promise to only send you relevant content and give you updates on your transactions',
+  "okButtonText":'Sign me up!',
+  "rejectButtonText":'No thanks',
+  "okButtonColor":'#f28046'});
+</script>
+
 
 </head>
 <body>
 
-    <h1>Test Lp Notification</h1>
+    <h1>Test Web Notification</h1>
 
     <button onclick="myFunction()">Click me</button>
+    <button onclick="myaFunction()">ScreenView</button>
     <!-- Add a div to display the message -->
     <div id="message"></div>
 
@@ -43,10 +74,24 @@
 
 <script>
     function myFunction() {
-        Leanplum.setUserId("WebUser34");
+       // Leanplum.setUserId("WebUser34");
+        clevertap.onUserLogin.push({
+ "Site": {
+   "Name": "Jack Montana",            // String
+   "Identity": "WebUser34",              // String or number
+ }
+})
         console.log("User sent to LP");
     }
     </script>
+    <script>
+      function myaFunction() {
+          // Tracks view cart event for a user.
+          clevertap.event.push("ScreenView");
+      }
+      </script>
+
+
     <!-- Initialize Leanplum -->
     <script>
 
@@ -78,13 +123,15 @@ Leanplum.start(function(success) {
 });
     </script>
 
+<!-
+
     <script>
       function requestNotificationPermission() {
     Notification.requestPermission().then(permission => {
         if (permission === 'granted') {
             console.log('Notification permission granted.');
             // Proceed with subscribing to push notifications
-            Leanplum.registerForWebPush('sw.min.js').then(subscriptionStatus => {
+            Leanplum.registerForWebPush('clevertap_sw').then(subscriptionStatus => {
                 console.log('Subscription status: %s', subscriptionStatus);
             });
         } else {
@@ -97,6 +144,7 @@ Leanplum.start(function(success) {
 requestNotificationPermission();
 
     </script>
+
 <!--
     <script>
 
@@ -111,7 +159,7 @@ let isWebPushSupported = Leanplum.isWebPushSupported();
 //Once validated, you can register the device for push:
 
   // Register by passing SW filepath (which is in our root directory).
-  Leanplum.registerForWebPush('sw.min.js').then(subscriptionStatus => {
+  Leanplum.registerForWebPush('clevertap_sw.js').then(subscriptionStatus => {
     console.log('Subscription status: %s', subscriptionStatus);
   });
     </script>
